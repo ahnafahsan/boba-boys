@@ -15,6 +15,7 @@
         } else {
           $basket[item.name] = item;
         }
+        localStorage.setItem('basket', JSON.stringify($basket))
       }} class="btn btn-primary btn-md">Add to Basket</button>
     </div>
   </div>

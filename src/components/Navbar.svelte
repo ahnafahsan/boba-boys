@@ -5,22 +5,27 @@
   import Bin from '../assets/Bin.svelte';
   import Plus from '../assets/Plus.svelte';
   import Minus from '../assets/Minus.svelte';
+  import { getAuth, signOut } from 'firebase/auth';
+import { push } from 'svelte-spa-router';
 
   const basketMinus = item => {
     const quantity = $basket[item.name].quantity;
     if(quantity > 1) {
       $basket[item.name].quantity -= 1;
+      localStorage.setItem('basket', JSON.stringify($basket))
     } else if(quantity == 1) {
       basketDelete(item);
     }
   }
   const basketPlus = item => {
     $basket[item.name].quantity += 1;
+    localStorage.setItem('basket', JSON.stringify($basket));
   }
   const basketDelete = item => {
     $basket = Object.fromEntries(Object.entries($basket).filter(([name])=>{
       name == item.name;
     }))
+    localStorage.setItem('basket', JSON.stringify($basket));
   }
 </script>
 <div class="w-full flex justify-center my-6">
@@ -88,7 +93,9 @@
                               </li>
                             {/each}
                           </ul>
-                          <button class={`btn btn-primary btn-block ${Object.keys($basket).length == 0 && 'btn-disabled'}`}>Checkout</button>
+                          <button class={`btn btn-primary btn-block ${Object.keys($basket).length == 0 && 'btn-disabled'}`}
+                            on:click={()=>push('/checkout')}
+                          >Checkout</button>
                       </div>
                   </div>
               </div>
@@ -100,13 +107,17 @@
                   </div>
               </label>
               <ul tabindex="0" class="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52"> 
-                {#if $userAuth}
-                    <div class="w-full text-center font-bold">Hello@gmail.com</div>
-                    <li><span>Logout</span></li>
-                  {:else}
+                {#if $userAuth.auth}
+                    <div class="w-full text-center font-bold">{''}</div>
+                    <li><a href="#/" on:click={()=>{
+                      const auth = getAuth();
+                      signOut(auth);
+                      $userAuth.auth = null;
+                    }}>Logout</a></li>
+                {:else}
                     <li><a href="#/login">Login</a></li>
                     <li><a href="#/register">Register</a></li>
-                  {/if}
+                {/if}
               </ul>
           </div>
       </div>
