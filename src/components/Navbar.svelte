@@ -1,7 +1,7 @@
 <script>
   // @ts-nocheck
   import Logo from '../assets/Logo.svelte';
-  import { basket } from '../global';
+  import { basket, userAuth } from '../global';
   import Bin from '../assets/Bin.svelte';
   import Plus from '../assets/Plus.svelte';
   import Minus from '../assets/Minus.svelte';
@@ -26,10 +26,10 @@
 <div class="w-full flex justify-center my-6">
   <div class="navbar bg-base-100 shadow rounded-box w-11/12">
       <div class="flex-1">
-          <span class="btn btn-ghost normal-case text-xl flex justify-between">
+          <a href="#/" class="btn btn-ghost normal-case text-xl flex justify-between">
               <Logo></Logo>
               <span class="whitespace-pre">{'   Boba Boys'}</span>
-          </span>
+          </a>
       </div>
       <div class="flex-none">
           <div class="dropdown dropdown-end">
@@ -99,8 +99,14 @@
                       <img alt="profile" src="https://api.lorem.space/image/face?hash=33791" />
                   </div>
               </label>
-              <ul tabindex="0" class="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52">
-                  <li><span>Logout</span></li>
+              <ul tabindex="0" class="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52"> 
+                {#if $userAuth}
+                    <div class="w-full text-center font-bold">Hello@gmail.com</div>
+                    <li><span>Logout</span></li>
+                  {:else}
+                    <li><a href="#/login">Login</a></li>
+                    <li><a href="#/register">Register</a></li>
+                  {/if}
               </ul>
           </div>
       </div>

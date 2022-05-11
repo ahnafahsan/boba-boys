@@ -5,10 +5,12 @@
   import Login from "./routes/Login.svelte";
   import Checkout from "./routes/Checkout.svelte";
   import E404 from "./routes/404.svelte";
+import Register from "./routes/Register.svelte";
 
   const routes = {
     "/": Home,
     "/login": Login,
+    "/register": Register,
     "/checkout": Checkout,
     "*": E404,
   }
