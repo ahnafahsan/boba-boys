@@ -11,6 +11,8 @@
 // @ts-ignore
   import Register from "./routes/Register.svelte";
   import { onMount } from "svelte";
+  import Orders from "./routes/Orders.svelte";
+  import Order from "./routes/Order.svelte";
 
   onMount(() => {
       const firebaseConfig = {
@@ -29,7 +31,6 @@
       if(user) {
         // @ts-ignore
         $userAuth = user;
-        console.log(user)
       }
     })
   })
@@ -39,9 +40,10 @@
     "/login": Login,
     "/register": Register,
     "/checkout": Checkout,
+    "/orders": Orders,
+    "/orders/:id": Order,
     "*": E404,
   }
-
 </script>
 
 <main class="flex flex-col items-center">

@@ -62,7 +62,7 @@
           <span class="mb-1">Password</span>
           <input bind:this={pass} type="password" autocomplete="current-password" required class="input border-gray-300 h-10">
         </div>
-        <button type="submit" class="btn btn-primary mt-3"
+        <button class="btn btn-primary mt-3"
           on:click={login}>
           Login
         </button>

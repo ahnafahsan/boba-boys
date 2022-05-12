@@ -28,7 +28,7 @@
     localStorage.setItem('basket', JSON.stringify($basket));
   }
 </script>
-<div class="w-full flex justify-center my-6">
+<div class="w-full flex justify-center my-6 relative z-50">
   <div class="navbar bg-base-100 rounded-box w-11/12">
       <div class="flex-1">
           <a href="#/" class="btn btn-ghost normal-case text-xl flex justify-between">

@@ -4,7 +4,7 @@
 </script>
 
 <div class="card w-full bg-base-100">
-  <figure><img src={item.image} alt="Shoes" /></figure>
+  <img src={item.image} alt="Drinks" />
   <div class="card-body">
     <h2 class="text-center font-bold text-lg">{item.name}</h2>
     <span class="text-center">£{item.price}</span>

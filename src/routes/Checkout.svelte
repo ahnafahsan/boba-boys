@@ -1,10 +1,10 @@
 <script>
-    import Error from '../assets/Error.svelte';
-    import Success from '../assets/Success.svelte';
-    import {basket} from '../global';
+    import { getDatabase, ref, set } from "firebase/database";
+    import Logo from '../assets/Logo.svelte';
+    import { basket, userAuth } from '../global';
+    import { push } from 'svelte-spa-router';
+    import { uid } from 'uid'
 
-    let fail;
-    let success;
 
     let cardInput;
     const handleCardInput = (evt) => {
@@ -32,9 +32,11 @@
 
     let valid = false;
     const validateCheckout = () => {
+        if(!$userAuth.email) {return false}
         try {
             if(cardInput.value.length >= 19
-            && expiryInput.value.length > 6
+            && (expiryInput.value.length > 6
+            || expiryInput.value == 5)
             && cvvInput.value.length > 2
             && nameInput.value.length > 0
             && fullInput.value.length > 0
@@ -42,26 +44,42 @@
             && postInput.value.length > 0
             && countryInput.value.length > 0) {
                 valid = true;
+                return true;
             } else {
                 valid = false;
+                return false;
             }
-            console.log(valid)
-        } catch {}
+        } catch {
+            return false;
+        }
+    }
+
+    const onCheckout = () => {
+        if(validateCheckout()) {
+            const id = uid(20);
+            const db = getDatabase();
+            set(ref(db, `users/${$userAuth.email.replace('.', '-')}/orders/${id}`), {
+                basket: $basket,
+                shipping: {
+                    name: nameInput.value,
+                    address: addressInput.value,
+                    post: postInput.value,
+                    country: countryInput.value,
+                },
+                date: new Date().toJSON().slice(0,10).replace(/-/g,'/')
+            });
+            setTimeout(() => {
+                push(`/orders/${id}`);
+                $basket = {};
+                localStorage.setItem('basket', null);
+            }, 500);
+        }
     }
 </script>
 
-<div class={`alert max-w-xs shadow-lg transition-all duration-200 ${fail && 'alert-error'} ${success && 'alert-success'} ${fail || success ?  'opacity-100 my-5' : 'opacity-0'}`}>
-    <div class="unalert">
-      {#if fail}
-        <Error></Error>
-      {:else if success}
-        <Success></Success>
-      {/if}
-      <span class="h-full capital">{fail || success}</span>
-    </div>
-</div>
-<form action="#/checkout" class={`flex flex-col-reverse lg:flex-row md:justify-between bg-white shadow-xl rounded-box p-5 mb-5`}>
+<form autocomplete="off" action="#/checkout" class={`flex flex-col-reverse ${$userAuth.email && 'lg:flex-row'} w-11/12 md:w-auto md:justify-between bg-white shadow-xl rounded-box p-5 mb-5`}>
     <div class="lg:mr-10">
+        {#if $userAuth.email}
         <span class="text-2xl">Shipping details</span>
         <hr class="mb-5 mt-2"/>
         <div class="flex flex-col">
@@ -97,8 +115,8 @@
                 handleCardInput(evt);
             }} class="input border-gray-300 h-10" type="text" placeholder="0000 0000 0000 0000">
         </div>
-        <div class="flex">
-            <div class="flex flex-col mr-5">
+        <div class="flex justify-evenly">
+            <div class="flex flex-col">
                 <span class="text-xs">EXPIRY DATE</span>
                 <input required bind:this={expiryInput} on:input={validateCheckout} on:keypress={evt => {
                     if (evt.which < 48 || evt.which > 57 || expiryInput.value.length >= 7) {
@@ -112,12 +130,21 @@
                 <input on:input={validateCheckout} bind:this={cvvInput} required class="input border-gray-300 h-10 w-40" type="password" placeholder="123">
             </div>
         </div>
-        <button type="submit" class={`${!valid && 'btn-disabled'} btn btn-primary mt-5 w-full`}>Checkout</button>
+        <button class={`${!valid && 'btn-disabled'} btn btn-primary mt-5 w-full`}
+        on:click={onCheckout}
+        >Checkout</button>
+        {/if}
+        <button class={`${$userAuth.email?.length > 0 && 'hidden'} btn btn-primary mt-5 w-full`}
+        on:click={()=>setTimeout(() => {
+            push('/login')
+        }, 100)}
+        >Sign in to checkout</button>
     </div>
     <div class="mb-5">
+        <div class="justify-center >:w-40 w-full hidden lg:flex"><Logo></Logo></div>
         <span class="text-2xl">Your order</span>
         <hr class="mb-5 mt-2 bg-black"/>
-        <ul class="w-96">
+        <ul class="w-96 overflow-y-auto >:my-5">
             {#each Object.entries($basket) as [name, info]}
                 <li class="flex h-20 w-20 >:rounded-box items-center">
                     <img class="mr-5" src={info.image} alt="drink">
@@ -132,5 +159,17 @@
                 </li>
             {/each}
         </ul>
+        <hr class="my-5">
+        <span><b>Total:</b> {(()=>{
+            let total = 0;
+            Object.values($basket).map(info => {
+                total += info.price * info.quantity;
+            })
+            return total.toLocaleString('en-US', {
+                style: 'currency',
+                currency: 'GBP'
+            });
+        })()}</span>
     </div>
+    <div class="flex justify-center w-full >:w-40 lg:hidden"><Logo></Logo></div>
 </form>
