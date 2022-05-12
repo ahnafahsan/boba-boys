@@ -18,8 +18,6 @@
     };
 
     const login = () => {
-      fail = null;
-      success = null;
       if(pass.value 
       && email.value 
       && validateEmail()) {

@@ -3,7 +3,7 @@
     import { basket } from '../global';
 </script>
 
-<div class="card w-full bg-base-100 shadow">
+<div class="card w-full bg-base-100">
   <figure><img src={item.image} alt="Shoes" /></figure>
   <div class="card-body">
     <h2 class="text-center font-bold text-lg">{item.name}</h2>

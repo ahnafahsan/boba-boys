@@ -6,7 +6,7 @@
   import Plus from '../assets/Plus.svelte';
   import Minus from '../assets/Minus.svelte';
   import { getAuth, signOut } from 'firebase/auth';
-import { push } from 'svelte-spa-router';
+  import { push, location, loc } from 'svelte-spa-router';
 
   const basketMinus = item => {
     const quantity = $basket[item.name].quantity;
@@ -29,7 +29,7 @@ import { push } from 'svelte-spa-router';
   }
 </script>
 <div class="w-full flex justify-center my-6">
-  <div class="navbar bg-base-100 shadow rounded-box w-11/12">
+  <div class="navbar bg-base-100 rounded-box w-11/12">
       <div class="flex-1">
           <a href="#/" class="btn btn-ghost normal-case text-xl flex justify-between">
               <Logo></Logo>
@@ -37,7 +37,7 @@ import { push } from 'svelte-spa-router';
           </a>
       </div>
       <div class="flex-none">
-          <div class="dropdown dropdown-end">
+          <div class={`${$location === '/checkout' && 'hidden'} dropdown dropdown-end`}>
               <label for="" tabindex="0" class="btn btn-ghost btn-circle">
                   <div class="indicator">
                       <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -66,7 +66,10 @@ import { push } from 'svelte-spa-router';
                         Object.values($basket).forEach((item) => {
                           total += item.price*item.quantity;
                         })
-                        return '£' + total;
+                        return total.toLocaleString('en-US', {
+                          style: 'currency',
+                          currency: 'GBP'
+                        });
                       })()}</span>
                       <div class="card-actions">
                           <ul class="w-full">
@@ -102,17 +105,20 @@ import { push } from 'svelte-spa-router';
           </div>
           <div class="dropdown dropdown-end">
               <label for="" tabindex="0" class="btn btn-ghost btn-circle avatar">
-                  <div class="w-10 rounded-full">
-                      <img alt="profile" src="https://api.lorem.space/image/face?hash=33791" />
+                  <div class="w-10 rounded-full text-center leading-10 text-3xl">
+                      {$userAuth.email ? $userAuth.email.split('')[0] : 'G'}
                   </div>
               </label>
               <ul tabindex="0" class="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52"> 
                 {#if $userAuth.auth}
                     <div class="w-full text-center font-bold">{''}</div>
+                    <li><a href="#/orders">Orders</a></li>
                     <li><a href="#/" on:click={()=>{
                       const auth = getAuth();
                       signOut(auth);
                       $userAuth.auth = null;
+                      $userAuth.email = null;
+                      basketDelete();
                     }}>Logout</a></li>
                 {:else}
                     <li><a href="#/login">Login</a></li>
