@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+    background-color: rgb(232, 232, 232) !important;
+}
+
+svg {
+    width: 100%;
+    height: 100%;
+}
+
+.unalert {
+    margin-top: -7px !important;
+    margin-bottom: -7px !important;
+}
+
+.capital {
+    text-transform: lowercase;
+}
+
+.capital::first-letter {
+    text-transform: uppercase;
+}
