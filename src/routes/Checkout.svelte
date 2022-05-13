@@ -5,23 +5,29 @@
     import { push } from 'svelte-spa-router';
     import { uid } from 'uid'
 
-
     let cardInput;
-    const handleCardInput = (evt) => {
-        evt.target.value = evt.target.value.replace(/\W/gi, '').replace(/(.{4})/g, '$1 ');
+    const handleCardInput = () => {
+        cardInput.value = cardInput.value.replace(/\W/gi, '').replace(/(.{4})/g, '$1 ');
     }
 
     let expiryInput;
-    const handleExpiryInput = (evt) => {
-        if(evt.target.value.length > 1 && !evt.target.value.match('/')) {
-            const expiry = evt.target.value.split('');
+    const handleExpiryInput = () => {
+        if(expiryInput.value.length > 1 && !expiryInput.value.match('/')) {
+            const expiry = expiryInput.value.split('');
             let newExpiry = expiry[0] + expiry[1] + '/';
             for(let i = 2; i < expiry.length; i++) {
                 newExpiry += expiry[i];
             }
-            evt.target.value = newExpiry;
+            expiryInput.value = newExpiry;
         }
     }
+
+    document.addEventListener('onautocomplete', e => {
+        if(e.target.hasAttribute('autocompleted')) {
+            handleCardInput();
+            handleExpiryInput();
+        }
+    })
 
     let cvvInput;
     let nameInput;
@@ -36,7 +42,7 @@
         try {
             if(cardInput.value.length >= 19
             && (expiryInput.value.length > 6
-            || expiryInput.value == 5)
+            || expiryInput.value.length == 5)
             && cvvInput.value.length > 2
             && nameInput.value.length > 0
             && fullInput.value.length > 0
@@ -77,7 +83,7 @@
     }
 </script>
 
-<form autocomplete="off" action="#/checkout" class={`flex flex-col-reverse ${$userAuth.email && 'lg:flex-row'} w-11/12 md:w-auto md:justify-between bg-white shadow-xl rounded-box p-5 mb-5`}>
+<form action="#/checkout" class={`flex flex-col-reverse ${$userAuth.email && 'lg:flex-row'} w-11/12 md:w-auto md:justify-between bg-white shadow-xl rounded-box p-5 mb-5`}>
     <div class="lg:mr-10">
         {#if $userAuth.email}
         <span class="text-2xl">Shipping details</span>

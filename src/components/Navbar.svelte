@@ -6,7 +6,7 @@
   import Plus from '../assets/Plus.svelte';
   import Minus from '../assets/Minus.svelte';
   import { getAuth, signOut } from 'firebase/auth';
-  import { push, location, loc } from 'svelte-spa-router';
+  import { push, location } from 'svelte-spa-router';
 
   const basketMinus = item => {
     const quantity = $basket[item.name].quantity;
@@ -22,9 +22,7 @@
     localStorage.setItem('basket', JSON.stringify($basket));
   }
   const basketDelete = item => {
-    $basket = Object.fromEntries(Object.entries($basket).filter(([name])=>{
-      name == item.name;
-    }))
+    $basket = Object.fromEntries(Object.entries($basket).filter(([name]) => name !== item.name))
     localStorage.setItem('basket', JSON.stringify($basket));
   }
 </script>

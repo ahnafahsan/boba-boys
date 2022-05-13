@@ -11,7 +11,7 @@
     }
 </script>
 
-<div class="w-11/12 grid grid-cols-1 gap-4 sm:grid-cols-2  md:grid-cols-3 md:gap-8 xl:grid-cols-5">
+<div class="w-11/12 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 md:gap-8">
     {#each Object.entries(teas) as [name, pic]}
         <Card item={{
             name: name,
