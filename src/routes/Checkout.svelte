@@ -152,8 +152,8 @@
         <hr class="mb-5 mt-2 bg-black"/>
         <ul class="w-96 overflow-y-auto >:my-5">
             {#each Object.entries($basket) as [name, info]}
-                <li class="flex h-20 w-20 >:rounded-box items-center">
-                    <img class="mr-5" src={info.image} alt="drink">
+                <li class="flex h-20 >:rounded-box items-center w-full">
+                    <img class="mr-5 w-20" src={info.image} alt="drink">
                     <div class="flex flex-col justify-start items-start">
                         <b>{name}</b>
                         <span>x{info.quantity}</span>
